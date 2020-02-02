@@ -5,7 +5,7 @@ import org.eclipse.lsp4j.services.*
 import java.util.concurrent.CompletableFuture
 
 
-class ExampleLanguageServer : LanguageServer, LanguageClientAware {
+class VdmppLanguageServer : LanguageServer, LanguageClientAware {
     private var client: LanguageClient? = null
     private var workspaceRoot: String? = null
     private var maxNumberOfProblems = 100

@@ -13,7 +13,7 @@ object App {
             val socket = Socket("localhost", port.toInt())
             val inputStream = socket.getInputStream()
             val outStream = socket.getOutputStream()
-            val server = ExampleLanguageServer()
+            val server = VdmppLanguageServer()
             val launcher = LSPLauncher.createServerLauncher(server, inputStream, outStream)
             val client = launcher.remoteProxy
             server.connect(client)
