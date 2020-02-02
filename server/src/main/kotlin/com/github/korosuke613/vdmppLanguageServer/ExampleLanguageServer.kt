@@ -26,7 +26,7 @@ class ExampleLanguageServer : LanguageServer, LanguageClientAware {
     override fun exit() {}
 
     private val fullTextDocumentService = object : FullTextDocumentService() {
-        override fun completion(textDocumentPosition: TextDocumentPositionParams?): CompletableFuture<CompletionList>? {
+        override fun completion(position: TextDocumentPositionParams?): CompletableFuture<CompletionList>? {
             val typescriptCompletionItem = CompletionItem()
             typescriptCompletionItem.label = "TypeScript"
             typescriptCompletionItem.kind = CompletionItemKind.Text
@@ -41,15 +41,15 @@ class ExampleLanguageServer : LanguageServer, LanguageClientAware {
             return CompletableFuture.completedFuture(CompletionList(false, completions))
         }
 
-        override fun resolveCompletionItem(item: CompletionItem): CompletableFuture<CompletionItem>? {
-            if (item.data == 1.0) {
-                item.detail = "TypeScript details"
-                item.setDocumentation("TypeScript documentation")
-            } else if (item.data == 2.0) {
-                item.detail = "JavaScript details"
-                item.setDocumentation("JavaScript documentation")
+        override fun resolveCompletionItem(unresolved: CompletionItem): CompletableFuture<CompletionItem>? {
+            if (unresolved.data == 1.0) {
+                unresolved.detail = "TypeScript details"
+                unresolved.setDocumentation("TypeScript documentation")
+            } else if (unresolved.data == 2.0) {
+                unresolved.detail = "JavaScript details"
+                unresolved.setDocumentation("JavaScript documentation")
             }
-            return CompletableFuture.completedFuture(item)
+            return CompletableFuture.completedFuture(unresolved)
         }
 
         override fun didChange(params: DidChangeTextDocumentParams) {
@@ -90,7 +90,7 @@ class ExampleLanguageServer : LanguageServer, LanguageClientAware {
         client!!.publishDiagnostics(PublishDiagnosticsParams(document.uri, diagnostics))
     }
 
-    public override fun getWorkspaceService(): WorkspaceService {
+    override fun getWorkspaceService(): WorkspaceService {
         return object : WorkspaceService {
             override fun symbol(params: WorkspaceSymbolParams): CompletableFuture<List<SymbolInformation?>>? {
                 return null
@@ -98,9 +98,9 @@ class ExampleLanguageServer : LanguageServer, LanguageClientAware {
 
             override fun didChangeConfiguration(params: DidChangeConfigurationParams) {
                 val settings =
-                    params.settings as Map<String, Any>
+                    params.settings as Map<*, *>
                 val languageServerExample =
-                    settings["languageServerExample"] as Map<String, Any>?
+                    settings["languageServerExample"] as Map<*, *>?
                 maxNumberOfProblems =
                     ((languageServerExample!!["maxNumberOfProblems"] ?: 100.0) as Double).toInt()
                 fullTextDocumentService.documents.values.forEach{d -> validateDocument(d)}

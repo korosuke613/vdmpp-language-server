@@ -39,7 +39,7 @@ export function activate(context: ExtensionContext) {
 
 				let args = [
 					'-jar',
-					path.resolve(context.extensionPath, '..', 'server', 'build', 'libs', 'language-server-example-all.jar'),
+					path.resolve(context.extensionPath, '..', 'server', 'build', 'libs', 'vdmpp-language-server-1.0-SNAPSHOT.jar'),
 					server.address().port.toString()
 				]
 
