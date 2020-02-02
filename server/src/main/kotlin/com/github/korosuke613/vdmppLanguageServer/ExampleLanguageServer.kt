@@ -19,6 +19,10 @@ class ExampleLanguageServer : LanguageServer, LanguageClientAware {
         return CompletableFuture.completedFuture(InitializeResult(capabilities))
     }
 
+    override fun initialized(params: InitializedParams?) {
+        client!!.logMessage(MessageParams(MessageType.Info, "hello, world"))
+    }
+
     override fun shutdown(): CompletableFuture<Any?>? {
         return CompletableFuture.completedFuture(null)
     }
@@ -97,13 +101,6 @@ class ExampleLanguageServer : LanguageServer, LanguageClientAware {
             }
 
             override fun didChangeConfiguration(params: DidChangeConfigurationParams) {
-                val settings =
-                    params.settings as Map<*, *>
-                val languageServerExample =
-                    settings["languageServerExample"] as Map<*, *>?
-                maxNumberOfProblems =
-                    ((languageServerExample!!["maxNumberOfProblems"] ?: 100.0) as Double).toInt()
-                fullTextDocumentService.documents.values.forEach{d -> validateDocument(d)}
             }
             override fun didChangeWatchedFiles(params: DidChangeWatchedFilesParams) {
                 client!!.logMessage(MessageParams(MessageType.Log, "We received an file change event"))
