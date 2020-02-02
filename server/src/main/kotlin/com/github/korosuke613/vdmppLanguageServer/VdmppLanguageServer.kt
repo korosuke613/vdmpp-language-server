@@ -101,6 +101,7 @@ class VdmppLanguageServer : LanguageServer, LanguageClientAware {
             }
 
             override fun didChangeConfiguration(params: DidChangeConfigurationParams) {
+                client!!.logMessage(MessageParams(MessageType.Log, "We received an configuration change event"))
             }
             override fun didChangeWatchedFiles(params: DidChangeWatchedFilesParams) {
                 client!!.logMessage(MessageParams(MessageType.Log, "We received an file change event"))

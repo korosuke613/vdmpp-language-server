@@ -63,17 +63,17 @@ export function activate(context: ExtensionContext) {
 	// Options to control the language client
 	let clientOptions: LanguageClientOptions = {
 		// Register the server for plain text documents
-		documentSelector: ['plaintext'],
+		documentSelector: [{ scheme: 'file', language: 'vdmpp' }],
 		synchronize: {
-			// Synchronize the setting section 'languageServerExample' to the server
-			configurationSection: 'languageServerExample',
+			// Synchronize the setting section 'VdmppLanguageServer' to the server
+			configurationSection: 'VdmppLanguageServer',
 			// Notify the server about file changes to '.clientrc files contain in the workspace
-			fileEvents: workspace.createFileSystemWatcher('**/.clientrc')
+			fileEvents: workspace.createFileSystemWatcher('**/.vdmpp')
 		}
 	}
 
 	// Create the language client and start the client.
-	let disposable = new LanguageClient('languageServerExample', 'Language Server Example', createServer, clientOptions).start();
+	let disposable = new LanguageClient('VdmppLanguageServer', 'VDM++ Language Server', createServer, clientOptions).start();
 
 	// Push the disposable to the context's subscriptions so that the 
 	// client can be deactivated on extension deactivation
