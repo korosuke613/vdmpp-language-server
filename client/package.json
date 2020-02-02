@@ -1,15 +1,15 @@
 {
-  "name": "language-client-example",
+  "name": "vdmpp-extension",
   "description": "VSCode part of a language server",
-  "author": "Microsoft Corporation",
+  "author": "Futa HIRAKOBA",
   "license": "MIT",
   "version": "0.0.1",
   "publisher": "vscode",
   "engines": {
-    "vscode": "^1.18.0"
+    "vscode": "^1.41.0"
   },
   "categories": [
-    "Other"
+    "Programming Languages"
   ],
   "activationEvents": [
     "onLanguage:vdmpp"
@@ -24,7 +24,19 @@
         ],
         "extensions": [
           ".vdmpp"
-        ]
+        ],
+        "configuration": "./language-configuration.json"
+      }
+    ],
+    "grammars": [
+      {
+          "language": "vdmpp",
+          "scopeName": "source.vdmpp",
+          "path": "./syntaxes/vdmpp.tmLanguage.json",
+      },
+      {
+          "scopeName": "source.vdmpp.number",
+          "path": "./syntaxes/number.tmLanguage.json"
       }
     ]
   },
