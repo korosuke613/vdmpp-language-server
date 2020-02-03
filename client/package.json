@@ -32,7 +32,7 @@
       {
           "language": "vdmpp",
           "scopeName": "source.vdmpp",
-          "path": "./syntaxes/vdmpp.tmLanguage.json",
+          "path": "./syntaxes/vdmpp.tmLanguage.json"
       },
       {
           "scopeName": "source.vdmpp.number",

@@ -1,20 +1,30 @@
 package com.github.korosuke613.vdmppLanguageServer
 
 import org.eclipse.lsp4j.launch.LSPLauncher
+import org.slf4j.LoggerFactory
 import java.io.IOException
 import java.net.Socket
+import org.slf4j.bridge.SLF4JBridgeHandler
 
 
 object App {
+    private val logger = LoggerFactory.getLogger(App.javaClass)
+
     @JvmStatic
     fun main(args: Array<String>) {
-        val port = args[0]
+        SLF4JBridgeHandler.removeHandlersForRootLogger()
+        SLF4JBridgeHandler.install()
+
+        logger.info( "Starting server" )
         try {
-            val socket = Socket("localhost", port.toInt())
-            val inputStream = socket.getInputStream()
-            val outStream = socket.getOutputStream()
             val server = VdmppLanguageServer()
-            val launcher = LSPLauncher.createServerLauncher(server, inputStream, outStream)
+            val launcher = if(args[0] == "-stdio") {
+                LSPLauncher.createServerLauncher(server, System.`in`, System.out)
+            }else{
+                val port = args[0]
+                val socket = Socket("localhost", port.toInt())
+                LSPLauncher.createServerLauncher(server, socket.getInputStream(), socket.getOutputStream())
+            }
             val client = launcher.remoteProxy
             server.connect(client)
             launcher.startListening()

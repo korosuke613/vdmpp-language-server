@@ -12,13 +12,6 @@ import java.util.concurrent.CompletableFuture
  */
 internal open class FullTextDocumentService : TextDocumentService {
     var documents = HashMap<String, TextDocumentItem>()
-    open fun completion(position: TextDocumentPositionParams?): CompletableFuture<CompletionList>? {
-        return null
-    }
-
-    override fun resolveCompletionItem(unresolved: CompletionItem): CompletableFuture<CompletionItem>? {
-        return null
-    }
 
     override fun hover(position: TextDocumentPositionParams): CompletableFuture<Hover>? {
         return null
@@ -37,7 +30,26 @@ internal open class FullTextDocumentService : TextDocumentService {
     }
 
     override fun documentHighlight(position: TextDocumentPositionParams): CompletableFuture<List<DocumentHighlight?>>? {
+        /*
+        TextDocumentPositionParams [
+          textDocument = TextDocumentIdentifier [
+            uri = "file:///Users/Futa/Desktop/vdmpp-syntax-highlight/vdmfiles/definitions.vdmpp"
+          ]
+          uri = null
+          position = Position [
+            line = 16
+            character = 24
+          ]
+        ]
+         */
+        val highlights = createHighlights(position.textDocument.uri, position.position)
+        println(highlights)
         return null
+    }
+
+    fun createHighlights(uri: String, position: Position): String {
+        val document = documents[uri]
+        return "uri:${uri}, position:${position}"
     }
 
     override fun documentSymbol(params: DocumentSymbolParams): CompletableFuture<MutableList<Either<SymbolInformation, DocumentSymbol>>>? {
@@ -57,6 +69,7 @@ internal open class FullTextDocumentService : TextDocumentService {
     }
 
     override fun formatting(params: DocumentFormattingParams): CompletableFuture<List<TextEdit?>>? {
+        // "-- comment\n\nclass うるう年\n\ntypes -- 型定義\n\npublic 年 = nat;\n\nvalues -- 定数定義f\n\npublic static ルール1 : 年 = 4;\npublic static ルール2 : 年 = 100;\npublic static ルール3 : 年 = 400;\n\ninstance variables -- インスタンス変数定義\n\nprivate 西暦 : nat := 2000;\n\noperations -- 操作定義\n\npublic 西暦設定 : 年 ==> int\n  西暦設定(年) == 西暦 := 年;\n\npublic うるう年判定 : () ==> seq of char\n  うるう年判定() ==\n    if(西暦 mod ルール1 = 0) then\n      if(西暦 mod ルール2 = 0) then\n        if(西暦 mod ルール3 = 0) then\n          return "うるう年"\n        else\n          return "平年"\n      else\n        return "うるう年"\n    else\n      return "平年";\n\nend うるう年\n\n\n\n\n\nfunctions\n\npublic うるう年判定仕様 : int -> seq of char\n  うるう年判定仕様(年) ==\n    if(年 mod 4 = 0) then\n      if(年 mod 100 = 0) then\n        if(年 mod 400 = 0) then\n          "うるう年"\n        else\n          "平年"\n      else\n        "うるう年"\n    else\n      "平年";\n\n"
         return null
     }
 
@@ -77,16 +90,7 @@ internal open class FullTextDocumentService : TextDocumentService {
     }
 
     override fun didChange(params: DidChangeTextDocumentParams) {
-        val uri = params.textDocument.uri
-        for (changeEvent in params.contentChanges) { // Will be full update because we specified that is all we support
-            if (changeEvent.range != null) {
-                throw UnsupportedOperationException("Range should be null for full document update.")
-            }
-            if (changeEvent.rangeLength != null) {
-                throw UnsupportedOperationException("RangeLength should be null for full document update.")
-            }
-            documents[uri]!!.text = changeEvent.text
-        }
+        return
     }
 
     override fun didClose(params: DidCloseTextDocumentParams) {
