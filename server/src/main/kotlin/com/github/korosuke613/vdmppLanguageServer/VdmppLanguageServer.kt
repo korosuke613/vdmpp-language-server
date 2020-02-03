@@ -52,7 +52,6 @@ class VdmppLanguageServer : LanguageServer, LanguageClientAware {
         **/
         override fun documentHighlight(position: TextDocumentPositionParams): CompletableFuture<List<DocumentHighlight?>>? {
             super.documentHighlight(position)
-            client!!.logMessage(MessageParams(MessageType.Log, position.toString()))
             return null
         }
 
@@ -75,8 +74,8 @@ class VdmppLanguageServer : LanguageServer, LanguageClientAware {
 
         override fun didOpen(params: DidOpenTextDocumentParams) {
             super.didOpen(params)
-            val vdmpp = this.documents[params.textDocument.uri]
-            if (vdmpp != null) {
+            val vdmpp: Vdmpp? = this.documents[params.textDocument.uri]
+            if (vdmpp != null && client != null) {
                 client!!.publishDiagnostics(vdmpp.publishDiagnosticsParams)
             }
         }
@@ -85,41 +84,13 @@ class VdmppLanguageServer : LanguageServer, LanguageClientAware {
             super.didChange(params)
             val vdmpp = this.documents[params.textDocument.uri]
             if (vdmpp != null) {
-                val document: TextDocumentItem? = vdmpp.textDocumentItem ?: return
-                if (document != null) {
-                    validateDocument(document)
-                }
+                client!!.publishDiagnostics(vdmpp.publishDiagnosticsParams)
             }
         }
     }
 
     override fun getTextDocumentService(): TextDocumentService? {
         return fullTextDocumentService
-    }
-
-    private fun validateDocument(document: TextDocumentItem) {
-        val diagnostics: MutableList<Diagnostic> = ArrayList()
-        val lines = document.text.split("\\r?\\n").toTypedArray()
-        var problems = 0
-        var i = 0
-        while (i < lines.size && problems < maxNumberOfProblems) {
-            val line = lines[i]
-            val index = line.indexOf("typescript")
-            if (index >= 0) {
-                problems++
-                val diagnostic = Diagnostic()
-                diagnostic.severity = DiagnosticSeverity.Warning
-                diagnostic.range = Range(Position(i, index), Position(i, index + 10))
-                diagnostic.message = String.format(
-                    "%s should be spelled TypeScript",
-                    line.substring(index, index + 10)
-                )
-                diagnostic.source = "ex"
-                diagnostics.add(diagnostic)
-            }
-            i++
-        }
-        client!!.publishDiagnostics(PublishDiagnosticsParams(document.uri, diagnostics))
     }
 
     override fun getWorkspaceService(): WorkspaceService {

@@ -97,17 +97,9 @@ internal open class FullTextDocumentService : TextDocumentService {
     override fun didChange(params: DidChangeTextDocumentParams) {
         val vdmpp = documents[params.textDocument.uri]
         if(vdmpp != null) {
-            params.contentChanges.forEach { c ->
-                val originalText = vdmpp.textDocumentItem.text
-                val startIndex = (c.range.start.line + 1) * c.range.start.character
-                val endIndex = (c.range.end.line + 1) * c.range.end.character
-                val beforeString = originalText.substring(0, startIndex)
-                val changeString = originalText.substring(startIndex, endIndex)
-                val endString = originalText.substring(endIndex, vdmpp.textDocumentItem.text.length)
-                vdmpp.textDocumentItem.text = "$beforeString${c.text}$endString"
-            }
+            vdmpp.textDocumentItem.text = params.contentChanges[0].text
+            vdmpp.updateVdmppFile()
         }
-        return
     }
 
     override fun didClose(params: DidCloseTextDocumentParams) {

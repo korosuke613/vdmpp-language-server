@@ -7,11 +7,15 @@ import com.fujitsu.vdmj.syntax.DefinitionReader
 import org.eclipse.lsp4j.*
 
 class Vdmpp(val textDocumentItem: TextDocumentItem){
-    val definitionReader: DefinitionReader
-    private val astDefinitions: ASTDefinitionList
-    val publishDiagnosticsParams: PublishDiagnosticsParams
+    lateinit var definitionReader: DefinitionReader
+    private lateinit var astDefinitions: ASTDefinitionList
+    lateinit var publishDiagnosticsParams: PublishDiagnosticsParams
 
     init {
+        updateVdmppFile()
+    }
+
+    fun updateVdmppFile(){
         val lexer = LexTokenReader(textDocumentItem.text, Dialect.VDM_PP)
         definitionReader = DefinitionReader(lexer)
         astDefinitions = definitionReader.readDefinitions()
