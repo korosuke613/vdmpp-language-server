@@ -73,11 +73,22 @@ class VdmppLanguageServer : LanguageServer, LanguageClientAware {
             return null
         }
 
+        override fun didOpen(params: DidOpenTextDocumentParams) {
+            super.didOpen(params)
+            val vdmpp = this.documents[params.textDocument.uri]
+            if (vdmpp != null) {
+                client!!.publishDiagnostics(vdmpp.publishDiagnosticsParams)
+            }
+        }
+
         override fun didChange(params: DidChangeTextDocumentParams) {
             super.didChange(params)
-            val document: TextDocumentItem? = this.documents[params.textDocument.uri]
-            if (document != null) {
-                validateDocument(document)
+            val vdmpp = this.documents[params.textDocument.uri]
+            if (vdmpp != null) {
+                val document: TextDocumentItem? = vdmpp.textDocumentItem ?: return
+                if (document != null) {
+                    validateDocument(document)
+                }
             }
         }
     }

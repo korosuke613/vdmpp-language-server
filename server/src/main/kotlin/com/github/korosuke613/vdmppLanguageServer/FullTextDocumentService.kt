@@ -1,5 +1,9 @@
 package com.github.korosuke613.vdmppLanguageServer
 
+import com.fujitsu.vdmj.ast.definitions.ASTDefinitionList
+import com.fujitsu.vdmj.lex.Dialect
+import com.fujitsu.vdmj.lex.LexTokenReader
+import com.fujitsu.vdmj.syntax.DefinitionReader
 import org.eclipse.lsp4j.*
 import org.eclipse.lsp4j.jsonrpc.messages.Either
 import org.eclipse.lsp4j.services.TextDocumentService
@@ -11,7 +15,7 @@ import java.util.concurrent.CompletableFuture
  * Override members to add functionality.
  */
 internal open class FullTextDocumentService : TextDocumentService {
-    var documents = HashMap<String, TextDocumentItem>()
+    var documents = HashMap<String, Vdmpp>()
 
     override fun hover(position: TextDocumentPositionParams): CompletableFuture<Hover>? {
         return null
@@ -86,10 +90,23 @@ internal open class FullTextDocumentService : TextDocumentService {
     }
 
     override fun didOpen(params: DidOpenTextDocumentParams) {
-        documents[params.textDocument.uri] = params.textDocument
+        val vdmpp = Vdmpp(params.textDocument)
+        documents[params.textDocument.uri] = vdmpp
     }
 
     override fun didChange(params: DidChangeTextDocumentParams) {
+        val vdmpp = documents[params.textDocument.uri]
+        if(vdmpp != null) {
+            params.contentChanges.forEach { c ->
+                val originalText = vdmpp.textDocumentItem.text
+                val startIndex = (c.range.start.line + 1) * c.range.start.character
+                val endIndex = (c.range.end.line + 1) * c.range.end.character
+                val beforeString = originalText.substring(0, startIndex)
+                val changeString = originalText.substring(startIndex, endIndex)
+                val endString = originalText.substring(endIndex, vdmpp.textDocumentItem.text.length)
+                vdmpp.textDocumentItem.text = "$beforeString${c.text}$endString"
+            }
+        }
         return
     }
 
