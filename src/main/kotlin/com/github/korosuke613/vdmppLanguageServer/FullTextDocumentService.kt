@@ -14,7 +14,7 @@ import java.util.concurrent.CompletableFuture
  * `TextDocumentService` that only supports `TextDocumentSyncKind.Full` updates.
  * Override members to add functionality.
  */
-internal open class FullTextDocumentService : TextDocumentService {
+open class FullTextDocumentService : TextDocumentService {
     var documents = HashMap<String, Vdmpp>()
 
     override fun hover(position: TextDocumentPositionParams): CompletableFuture<Hover>? {
