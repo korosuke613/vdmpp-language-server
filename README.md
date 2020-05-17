@@ -8,9 +8,16 @@ LSP(Language Server Protocol) for VDM++ implemented in Java using [LSP4J](https:
 ./gradlew build
 ```
 
-### run server
+### run server(standard input mode)
 ```bash
+./gradlew run -q --console=plain --args="-stdio"
+```
 
+### run server(client connect mode)
+`<PORT>` is the LSP client opened port number.
+
+```bash
+./gradlew run -q --args="<PORT>"
 ```
 
 ## Message samples
