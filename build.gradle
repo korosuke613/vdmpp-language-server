@@ -24,6 +24,10 @@ dependencies {
 apply plugin: 'application'
 mainClassName = 'com.github.korosuke613.vdmppLanguageServer.App'
 
+run {
+    standardInput = System.in
+}
+
 test {
     useJUnitPlatform()
 }
