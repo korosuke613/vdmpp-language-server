@@ -18,7 +18,10 @@ object App {
         logger.info( "Starting server" )
         try {
             val server = VdmppLanguageServer()
-            val launcher = if(args[0] == "-stdio") {
+            if(args.isEmpty()){
+                throw IllegalArgumentException("You should add argument. ('-stdio' or PORT)")
+            }
+            val launcher = if(args.asList().contains("-stdio")) {
                 LSPLauncher.createServerLauncher(server, System.`in`, System.out)
             }else{
                 val port = args[0]
