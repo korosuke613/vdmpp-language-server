@@ -5,14 +5,25 @@ import com.fujitsu.vdmj.lex.Dialect
 import com.fujitsu.vdmj.lex.LexTokenReader
 import com.fujitsu.vdmj.syntax.DefinitionReader
 import org.eclipse.lsp4j.*
+import org.eclipse.lsp4j.jsonrpc.CancelChecker
 
 class Vdmpp(val textDocumentItem: TextDocumentItem){
     lateinit var definitionReader: DefinitionReader
     private lateinit var astDefinitions: ASTDefinitionList
     lateinit var publishDiagnosticsParams: PublishDiagnosticsParams
+    lateinit var textDocumentIdentifier: TextDocumentIdentifier
+    lateinit var textDocumentPositionParams: TextDocumentPositionParams
 
     init {
         updateVdmppFile()
+    }
+
+    fun getHover(monitor: CancelChecker): Hover{
+        val hover = Hover()
+        hover.setContents(MarkupContent("", "aaaaa"))
+        println(monitor)
+        println(hover)
+        return hover
     }
 
     fun updateVdmppFile(){
@@ -29,5 +40,7 @@ class Vdmpp(val textDocumentItem: TextDocumentItem){
             diagnostics.add(Diagnostic(range, e.message))
         }
         publishDiagnosticsParams = PublishDiagnosticsParams(textDocumentItem.uri, diagnostics)
+        textDocumentIdentifier = TextDocumentIdentifier(textDocumentItem.uri)
+        textDocumentPositionParams = TextDocumentPositionParams(textDocumentIdentifier, Position(0, 0))
     }
 }

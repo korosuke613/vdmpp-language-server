@@ -20,6 +20,7 @@ class VdmppLanguageServer : LanguageServer, LanguageClientAware {
         capabilities.setTextDocumentSync(TextDocumentSyncKind.Full)
         capabilities.setCodeActionProvider(false)
         capabilities.documentHighlightProvider = true
+        capabilities.hoverProvider = true
         return CompletableFuture.completedFuture(InitializeResult(capabilities))
     }
 
@@ -53,6 +54,12 @@ class VdmppLanguageServer : LanguageServer, LanguageClientAware {
         override fun documentHighlight(position: TextDocumentPositionParams): CompletableFuture<List<DocumentHighlight?>>? {
             super.documentHighlight(position)
             return null
+        }
+
+        override fun hover(position: TextDocumentPositionParams): CompletableFuture<Hover>? {
+            val hover = super.hover(position)
+            client!!.logMessage(MessageParams(MessageType.Log, hover.toString()))
+            return hover
         }
 
         override fun resolveCompletionItem(unresolved: CompletionItem): CompletableFuture<CompletionItem>? {

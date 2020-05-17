@@ -1,13 +1,15 @@
 package com.github.korosuke613.vdmppLanguageServer
 
-import com.fujitsu.vdmj.ast.definitions.ASTDefinitionList
-import com.fujitsu.vdmj.lex.Dialect
-import com.fujitsu.vdmj.lex.LexTokenReader
-import com.fujitsu.vdmj.syntax.DefinitionReader
 import org.eclipse.lsp4j.*
+import org.eclipse.lsp4j.jsonrpc.CompletableFutures.computeAsync
 import org.eclipse.lsp4j.jsonrpc.messages.Either
 import org.eclipse.lsp4j.services.TextDocumentService
+import java.util.*
 import java.util.concurrent.CompletableFuture
+import kotlin.collections.HashMap
+import kotlin.collections.List
+import kotlin.collections.MutableList
+import kotlin.collections.set
 
 
 /**
@@ -18,7 +20,13 @@ open class FullTextDocumentService : TextDocumentService {
     var documents = HashMap<String, Vdmpp>()
 
     override fun hover(position: TextDocumentPositionParams): CompletableFuture<Hover>? {
-        return null
+        return computeAsync { monitor ->
+            val hover = Hover()
+            val contents: MutableList<Either<String, MarkedString>> = mutableListOf()
+            contents.add(Either.forLeft("aaaaaaaaaaaaaaaaaaa"))
+            hover.setContents(contents)
+            hover
+        }
     }
 
     override fun signatureHelp(position: TextDocumentPositionParams): CompletableFuture<SignatureHelp>? {
